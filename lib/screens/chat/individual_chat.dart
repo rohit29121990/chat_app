@@ -39,7 +39,7 @@ class _IndividiualPageState extends State<IndividiualPage> {
   }
 
   void connect() {
-    socket = IO.io('http://192.168.29.10:5001', <String, dynamic>{
+    socket = IO.io('http://192.168.1.6:5001', <String, dynamic>{
       "transports": ["websocket"],
       "autoConnect": false,
     });
@@ -189,7 +189,7 @@ class _IndividiualPageState extends State<IndividiualPage> {
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                  height: 56,
+                  // height: 56,
                   margin: const EdgeInsets.only(bottom: 20),
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
