@@ -33,6 +33,9 @@ socket.on("message",(msg)=>{
 app.route("/check").get((req,res)=>{
   return res.json("Your app is working fine")
 })
+app.route("/").get((req,res)=>{
+  return res.json("Welcome in chat app")
+})
 server.listen(port,"0.0.0.0",()=>{
-  console.log("server started");
+  console.log("we are listning on ${process.env.PORT}");
 });
