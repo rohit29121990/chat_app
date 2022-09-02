@@ -393,3 +393,4 @@ class _IndividiualPageState extends State<IndividiualPage> {
     });
   }
 }
+//https://whispering-citadel-13714.herokuapp.com/ | https://git.heroku.com/whispering-citadel-13714.git
