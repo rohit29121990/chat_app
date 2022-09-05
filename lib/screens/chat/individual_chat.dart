@@ -1,9 +1,7 @@
-import 'dart:io';
-
 import 'package:chat_app/model/chat_model.dart';
 import 'package:chat_app/screens/camera/camera_screen.dart';
 import 'package:chat_app/screens/camera/view/camera_view.dart';
-import 'package:chat_app/screens/custom_ui/ownfile_cart.dart';
+// import 'package:chat_app/screens/custom_ui/ownfile_cart.dart';
 import 'package:chat_app/widget/own_message.dart';
 import 'package:chat_app/widget/reply_message.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -15,8 +13,14 @@ import '../../model/message_model.dart';
 import '../../widget/icon_creation.dart';
 import '../constents.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:http/http.dart' as http;
+import 'dart:io';
+import 'dart:convert';
 
+import '../custom_ui/ownfile_cart.dart';
 import '../custom_ui/replyfile_card.dart';
+
+// import '../custom_ui/replyfile_card.dart';
 
 class IndividiualPage extends StatefulWidget {
   const IndividiualPage(
@@ -38,6 +42,7 @@ class _IndividiualPageState extends State<IndividiualPage> {
   final ScrollController _scrollController = ScrollController();
   final ImagePicker _picker = ImagePicker();
   late XFile? file;
+  int popTime = 0;
 
   _onEmojiSelected(Emoji emoji) {
     print('_onEmojiSelected: ${emoji.emoji}');
@@ -49,18 +54,24 @@ class _IndividiualPageState extends State<IndividiualPage> {
 
   void connect() {
     late String url;
-    url = 'http://192.168.1.10:5000';
+    url = '$baseurl:$port';
     // url = 'http://13.235.43.4:5000';
     socket = IO.io(url, <String, dynamic>{
       "transports": ["websocket"],
-      "autoConnect": false,
+      "autoConnect": true,
+      'id': widget.sourceChat.name
     });
+
     socket.connect();
     socket.emit('signin', widget.sourceChat.id);
     socket.onConnect((data) {
       print("Connected");
       socket.on('message', (msg) {
-        setMessage('destination', msg["message"], msg['path']);
+        setMessage(
+          'destination',
+          msg["message"],
+          msg['path'],
+        );
         print("$msg");
       });
     });
@@ -88,8 +99,29 @@ class _IndividiualPageState extends State<IndividiualPage> {
     setState(() => messages.add(messageModel));
   }
 
-  void onImageSend(String path) {
-    print('gggggg${path}');
+  void onImageSend(String path, String message) async {
+    print('gggggg${path}:${message}');
+    for (int i = 0; i < popTime; i++) {
+      Navigator.pop(context);
+    }
+    var request = http.MultipartRequest(
+        "POST", Uri.parse("http://192.168.1.10:5000/routes/addimage"));
+    request.files.add(await http.MultipartFile.fromPath("img", path));
+    request.headers.addAll({
+      "Content-type": "multipart/form-data",
+    });
+    http.StreamedResponse response = await request.send();
+    var httpResponse = await http.Response.fromStream(response);
+    print(response.statusCode);
+    var data = json.decode(httpResponse.body);
+    print('ggggg${data['path']}');
+    setMessage('source', message, path);
+    socket.emit('message', {
+      'message': message,
+      'sourceId': widget.sourceChat.id,
+      'targetId': widget.chatModel.id,
+      'path': data['path']
+    });
   }
 
   @override
@@ -207,13 +239,29 @@ class _IndividiualPageState extends State<IndividiualPage> {
                         return const SizedBox(height: 70);
                       }
                       if (messages[index].type == 'source') {
-                        return OwnMessage(
-                          message: messages[index],
-                        );
+                        if (messages[index].path.isNotEmpty) {
+                          return OweFileCart(
+                            path: messages[index].path,
+                            message: messages[index].message,
+                            time: messages[index].time,
+                          );
+                        } else {
+                          return OwnMessage(
+                            message: messages[index],
+                          );
+                        }
                       } else {
-                        return ReplyMessage(
-                          message: messages[index],
-                        );
+                        if (messages[index].path.isNotEmpty) {
+                          return ReplyFileCard(
+                            path: messages[index].path,
+                            message: messages[index].message,
+                            time: messages[index].time,
+                          );
+                        } else {
+                          return ReplyMessage(
+                            message: messages[index],
+                          );
+                        }
                       }
                     }),
                 // ListView(
@@ -276,14 +324,16 @@ class _IndividiualPageState extends State<IndividiualPage> {
                                                         Icons.attach_file)),
                                                 IconButton(
                                                     onPressed: () {
+                                                      setState(() {
+                                                        popTime = 2;
+                                                      });
                                                       Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
                                                               builder: (builder) =>
                                                                   CameraScreen(
                                                                     onImageSend:
-                                                                        () =>
-                                                                            onImageSend,
+                                                                        onImageSend,
                                                                   )));
                                                     },
                                                     icon: const Icon(
@@ -392,11 +442,14 @@ class _IndividiualPageState extends State<IndividiualPage> {
                 icon: Icons.camera_alt,
                 title: 'Camera',
                 onTap: () {
+                  setState(() {
+                    popTime = 3;
+                  });
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (builder) => CameraScreen(
-                                onImageSend: () => onImageSend,
+                                onImageSend: onImageSend,
                               )));
                 },
               ),
@@ -406,6 +459,9 @@ class _IndividiualPageState extends State<IndividiualPage> {
                 icon: Icons.insert_photo,
                 title: 'Gallery',
                 onTap: () async {
+                  setState(() {
+                    popTime = 2;
+                  });
                   file = await _picker.pickImage(source: ImageSource.gallery);
                   Navigator.push(
                       context,

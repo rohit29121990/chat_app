@@ -157,7 +157,7 @@ class _CameraScreenState extends State<CameraScreen> {
         MaterialPageRoute(
             builder: (context) => CameraViewPage(
                   path: filePath.path,
-                  onImageSend: widget.onImageSend(),
+                  onImageSend: widget.onImageSend,
                 )));
   }
 

@@ -92,3 +92,6 @@ const String flutter4 = 'assets/flutter4.jpg';
 const String flutter5 = 'assets/flutter5.jpg';
 const String bg = 'assets/bg.png';
 const Color lightGreen = Color(0xFF25D366);
+
+const String baseurl = 'http://192.168.1.10';
+const String port = '5000';
