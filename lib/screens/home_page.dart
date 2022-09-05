@@ -51,7 +51,7 @@ class _HomePageState extends State<HomePage>
       body: TabBarView(
         controller: _tabController,
         children: [
-          const CameraPage(),
+          const CamereaPage(),
           ChatPage(
               chatModels: widget.chatModels, sourceChat: widget.sourceChat),
           const StatusPage(),

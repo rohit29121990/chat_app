@@ -35,7 +35,7 @@ packages:
       name: camera_avfoundation
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.9.8+3"
+    version: "0.9.8+5"
   camera_platform_interface:
     dependency: transitive
     description:
@@ -126,7 +126,7 @@ packages:
       name: file
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.1.2"
+    version: "6.1.4"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -152,7 +152,7 @@ packages:
       name: flutter_svg
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.3"
+    version: "1.1.4"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -170,6 +170,55 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.15.0"
+  http:
+    dependency: "direct main"
+    description:
+      name: http
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.13.5"
+  http_parser:
+    dependency: transitive
+    description:
+      name: http_parser
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.0.1"
+  image_picker:
+    dependency: "direct main"
+    description:
+      name: image_picker
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.8.5+3"
+  image_picker_android:
+    dependency: transitive
+    description:
+      name: image_picker_android
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.8.5+2"
+  image_picker_for_web:
+    dependency: transitive
+    description:
+      name: image_picker_for_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.8"
+  image_picker_ios:
+    dependency: transitive
+    description:
+      name: image_picker_ios
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.8.6"
+  image_picker_platform_interface:
+    dependency: transitive
+    description:
+      name: image_picker_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.6.1"
   js:
     dependency: transitive
     description:
@@ -212,6 +261,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.0"
+  otp_text_field:
+    dependency: "direct main"
+    description:
+      name: otp_text_field
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.3"
   path:
     dependency: "direct main"
     description:
@@ -246,7 +302,7 @@ packages:
       name: path_provider_android
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.19"
+    version: "2.0.20"
   path_provider_ios:
     dependency: transitive
     description:
@@ -358,7 +414,7 @@ packages:
       name: shared_preferences_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0"
+    version: "2.1.0"
   shared_preferences_web:
     dependency: transitive
     description:
@@ -441,6 +497,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.9"
+  typed_data:
+    dependency: transitive
+    description:
+      name: typed_data
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.3.1"
   vector_math:
     dependency: transitive
     description:
@@ -454,14 +517,14 @@ packages:
       name: video_player
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.4.6"
+    version: "2.4.7"
   video_player_android:
     dependency: transitive
     description:
       name: video_player_android
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.3.8"
+    version: "2.3.9"
   video_player_avfoundation:
     dependency: transitive
     description:
@@ -496,7 +559,7 @@ packages:
       name: xdg_directories
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.0+1"
+    version: "0.2.0+2"
   xml:
     dependency: transitive
     description:

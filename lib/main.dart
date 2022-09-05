@@ -1,6 +1,7 @@
 import 'package:chat_app/screens/camera/camera_screen.dart';
-
 import 'package:chat_app/screens/login/login_page.dart';
+
+import 'package:chat_app/screens/new_screen/login.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 
@@ -25,7 +26,9 @@ class MyApp extends StatelessWidget {
           primary: Color(0xFF075E54),
         ),
       ),
-      home: const LoginPage(),
+      home:
+          //const Login()
+          const LoginPage(),
     );
   }
 }

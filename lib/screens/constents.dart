@@ -30,6 +30,7 @@ PopupMenuButton<String> popupMenusHome = PopupMenuButton<String>(
       ];
     });
 
+// this will show popup menus in right side three dots
 PopupMenuButton<String> popupMenusIndividual = PopupMenuButton<String>(
     icon: const Icon(Icons.more_vert),
     onSelected: (value) {
@@ -89,4 +90,5 @@ const String flutter2 = 'assets/flutter2.jpg';
 const String flutter3 = 'assets/flutter3.jpg';
 const String flutter4 = 'assets/flutter4.jpg';
 const String flutter5 = 'assets/flutter5.jpg';
+const String bg = 'assets/bg.png';
 const Color lightGreen = Color(0xFF25D366);

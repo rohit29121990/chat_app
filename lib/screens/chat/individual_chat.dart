@@ -1,16 +1,22 @@
 import 'dart:io';
 
 import 'package:chat_app/model/chat_model.dart';
+import 'package:chat_app/screens/camera/camera_screen.dart';
+import 'package:chat_app/screens/camera/view/camera_view.dart';
+import 'package:chat_app/screens/custom_ui/ownfile_cart.dart';
 import 'package:chat_app/widget/own_message.dart';
 import 'package:chat_app/widget/reply_message.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../model/message_model.dart';
 import '../../widget/icon_creation.dart';
 import '../constents.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+
+import '../custom_ui/replyfile_card.dart';
 
 class IndividiualPage extends StatefulWidget {
   const IndividiualPage(
@@ -30,6 +36,9 @@ class _IndividiualPageState extends State<IndividiualPage> {
   late IO.Socket socket;
   List<MessageModel> messages = [];
   final ScrollController _scrollController = ScrollController();
+  final ImagePicker _picker = ImagePicker();
+  late XFile? file;
+
   _onEmojiSelected(Emoji emoji) {
     print('_onEmojiSelected: ${emoji.emoji}');
   }
@@ -39,7 +48,10 @@ class _IndividiualPageState extends State<IndividiualPage> {
   }
 
   void connect() {
-    socket = IO.io('http://192.168.1.10:5001', <String, dynamic>{
+    late String url;
+    url = 'http://192.168.1.10:5000';
+    // url = 'http://13.235.43.4:5000';
+    socket = IO.io(url, <String, dynamic>{
       "transports": ["websocket"],
       "autoConnect": false,
     });
@@ -48,17 +60,36 @@ class _IndividiualPageState extends State<IndividiualPage> {
     socket.onConnect((data) {
       print("Connected");
       socket.on('message', (msg) {
-        setMessage('destination', msg["message"]);
+        setMessage('destination', msg["message"], msg['path']);
         print("$msg");
       });
     });
     print(socket.connected);
   }
 
-  void sendMessage(String message, int sourceId, int targetId) {
-    setMessage('source', message);
-    socket.emit('message',
-        {'message': message, 'sourceId': sourceId, 'targetId': targetId});
+  void sendMessage(String message, int sourceId, int targetId, String path) {
+    setMessage('source', message, path);
+    socket.emit('message', {
+      'message': message,
+      'sourceId': sourceId,
+      'targetId': targetId,
+      'path': path
+    });
+  }
+
+  setMessage(String _type, String _message, String path) {
+    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 100), curve: Curves.easeOut);
+    MessageModel messageModel = MessageModel(
+        message: _message,
+        type: _type,
+        path: path,
+        time: DateTime.now().toString().substring(10, 16));
+    setState(() => messages.add(messageModel));
+  }
+
+  void onImageSend(String path) {
+    print('gggggg${path}');
   }
 
   @override
@@ -185,11 +216,14 @@ class _IndividiualPageState extends State<IndividiualPage> {
                         );
                       }
                     }),
+                // ListView(
+                // children: [OweFileCart( ), ReplyFileCard()],
+                // )
               ),
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                  height: 56,
+                  // height: 56,
                   margin: const EdgeInsets.only(bottom: 20),
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -241,7 +275,17 @@ class _IndividiualPageState extends State<IndividiualPage> {
                                                     icon: const Icon(
                                                         Icons.attach_file)),
                                                 IconButton(
-                                                    onPressed: () {},
+                                                    onPressed: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (builder) =>
+                                                                  CameraScreen(
+                                                                    onImageSend:
+                                                                        () =>
+                                                                            onImageSend,
+                                                                  )));
+                                                    },
                                                     icon: const Icon(
                                                         Icons.camera_alt))
                                               ],
@@ -265,7 +309,8 @@ class _IndividiualPageState extends State<IndividiualPage> {
                                       sendMessage(
                                           _controller.text,
                                           widget.sourceChat.id!,
-                                          widget.chatModel.id!);
+                                          widget.chatModel.id!,
+                                          '');
                                       _controller.clear();
                                     }
                                   },
@@ -334,46 +379,65 @@ class _IndividiualPageState extends State<IndividiualPage> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
           child: Column(children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconCreation(
-                  color: Colors.indigo,
-                  icon: Icons.insert_drive_file,
-                  title: 'Document',
-                ),
-                const SizedBox(width: 40),
-                IconCreation(
-                  color: Colors.pink,
-                  icon: Icons.camera_alt,
-                  title: 'Camera',
-                ),
-                const SizedBox(width: 40),
-                IconCreation(
-                  color: Colors.purple,
-                  icon: Icons.insert_photo,
-                  title: 'Gallery',
-                )
-              ],
-            ),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              IconCreation(
+                color: Colors.indigo,
+                icon: Icons.insert_drive_file,
+                title: 'Document',
+                onTap: () {},
+              ),
+              const SizedBox(width: 40),
+              IconCreation(
+                color: Colors.pink,
+                icon: Icons.camera_alt,
+                title: 'Camera',
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (builder) => CameraScreen(
+                                onImageSend: () => onImageSend,
+                              )));
+                },
+              ),
+              const SizedBox(width: 40),
+              IconCreation(
+                color: Colors.purple,
+                icon: Icons.insert_photo,
+                title: 'Gallery',
+                onTap: () async {
+                  file = await _picker.pickImage(source: ImageSource.gallery);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (builder) => CameraViewPage(
+                                path: file!.path,
+                                onImageSend: onImageSend,
+                              )));
+                },
+              )
+            ]),
             const SizedBox(height: 30),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               IconCreation(
                 color: Colors.orange,
                 icon: Icons.headset,
                 title: 'Audio',
+                onTap: () {},
               ),
               const SizedBox(width: 40),
               IconCreation(
                 color: Colors.pink,
                 icon: Icons.location_pin,
                 title: 'Location',
+                onTap: () {},
               ),
               const SizedBox(width: 40),
               IconCreation(
                 color: Colors.blue,
                 icon: Icons.person,
                 title: 'Contact',
+                onTap: () async {},
               )
             ])
           ]),
@@ -381,15 +445,5 @@ class _IndividiualPageState extends State<IndividiualPage> {
       ),
     );
   }
-
-  setMessage(String _type, String _message) {
-    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 100), curve: Curves.easeOut);
-    setState(() {
-      messages.add(MessageModel(
-          message: _message,
-          type: _type,
-          time: DateTime.now().toString().substring(10, 16)));
-    });
-  }
 }
+//https://whispering-citadel-13714.herokuapp.com/ | https://git.heroku.com/whispering-citadel-13714.git

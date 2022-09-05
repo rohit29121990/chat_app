@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class CameraViewPage extends StatelessWidget {
-  CameraViewPage({Key? key, required this.path}) : super(key: key);
-  String path;
+  CameraViewPage({Key? key, required this.path, required this.onImageSend})
+      : super(key: key);
+  final String path;
+  final Function(String) onImageSend;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,13 +69,18 @@ class CameraViewPage extends StatelessWidget {
                         color: Colors.white,
                         size: 26.8,
                       ),
-                      suffixIcon: CircleAvatar(
-                        radius: 26,
-                        backgroundColor: Colors.tealAccent[700],
-                        child: const Icon(
-                          Icons.check,
-                          size: 26.8,
-                          color: Colors.white,
+                      suffixIcon: InkWell(
+                        onTap: () {
+                          onImageSend(path);
+                        },
+                        child: CircleAvatar(
+                          radius: 26,
+                          backgroundColor: Colors.tealAccent[700],
+                          child: const Icon(
+                            Icons.check,
+                            size: 26.8,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                       hintStyle:

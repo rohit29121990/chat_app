@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 
 class IconCreation extends StatelessWidget {
   IconCreation(
-      {Key? key, required this.color, required this.icon, required this.title})
+      {Key? key,
+      required this.color,
+      required this.icon,
+      required this.title,
+      required this.onTap})
       : super(key: key);
   IconData icon;
   Color color;
   String title;
+  final Function onTap;
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        Navigator.pop(context);
-      },
+      onTap: () => onTap(),
       child: Column(children: [
         CircleAvatar(
           radius: 30,
